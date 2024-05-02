@@ -1,5 +1,7 @@
 package com.microblogging.service;
 
+import static java.util.Objects.nonNull;
+
 import com.microblogging.domain.User;
 import com.microblogging.dto.UserDto;
 import com.microblogging.repository.UserRepository;
@@ -20,10 +22,9 @@ public class UserService {
   }
 
   public List<UserDto> getUsers() {
-    List<User> users = userRepository.findAll();
     List<UserDto> userDtos = new ArrayList<>();
 
-    users.parallelStream()
+    userRepository.findAll().parallelStream()
         .forEach(user -> userDtos.add(entityToDto(user)));
 
     return userDtos;
@@ -34,6 +35,20 @@ public class UserService {
     return users.map(this::entityToDto).orElse(null);
   }
 
+  public UserDto createUser(UserDto userDto) {
+    UserDto existingUser = getUser(userDto.getUserName());
+    if (nonNull(existingUser)) {
+      return existingUser;
+    }
+
+    User user = new User();
+    user.setUserName(userDto.getUserName());
+    user.setFollowers(0);
+    user.setFollowing(0);
+    userRepository.save(user);
+    return entityToDto(user);
+  }
+
   private UserDto entityToDto(User user) {
     return UserDto.builder()
         .userName(user.getUserName())
@@ -41,4 +56,5 @@ public class UserService {
         .following(user.getFollowing())
         .build();
   }
+
 }
