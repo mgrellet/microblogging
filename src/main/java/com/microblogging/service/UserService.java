@@ -2,8 +2,10 @@ package com.microblogging.service;
 
 import static java.util.Objects.nonNull;
 
+import com.microblogging.domain.Following;
 import com.microblogging.domain.User;
 import com.microblogging.dto.UserDto;
+import com.microblogging.repository.FollowingRepository;
 import com.microblogging.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +17,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final FollowingRepository followingRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository, FollowingRepository followingRepository) {
     this.userRepository = userRepository;
+    this.followingRepository = followingRepository;
   }
 
   public List<UserDto> getUsers() {
@@ -57,4 +61,11 @@ public class UserService {
         .build();
   }
 
+  public void followUser(String userName, String userToFollow) {
+    Following following = Following.builder()
+        .userName(userName)
+        .following(userToFollow)
+        .build();
+    followingRepository.save(following);
+  }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -42,6 +43,13 @@ public class UserController {
         .buildAndExpand(userDto.getUserName())
         .toUri();
     return ResponseEntity.created(location).body(userService.createUser(userDto));
+  }
+
+  @PostMapping("{userToFollow}/follow")
+  public ResponseEntity<String> followUser(@RequestHeader(value = "x-app-user") String userName,
+      @PathVariable String userToFollow) {
+    userService.followUser(userName, userToFollow);
+    return ResponseEntity.ok("Following user " + userToFollow);
   }
 
 }
