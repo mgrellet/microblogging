@@ -1,8 +1,11 @@
 package com.microblogging.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +24,9 @@ import lombok.ToString;
 public class Post {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private String postId;
   private String userName;
   private String postText;
+  private Date creationDate;
 }
