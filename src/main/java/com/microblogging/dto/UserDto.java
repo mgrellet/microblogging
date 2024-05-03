@@ -21,6 +21,6 @@ public class UserDto {
   private Integer followers;
   private Integer following;
   private Integer totalPosts;
-  private List<PostDto> posts;
+  private List<TweetDto> posts;
 
 }

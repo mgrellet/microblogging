@@ -2,6 +2,7 @@ package com.microblogging.controller;
 
 import com.microblogging.dto.UserDto;
 import com.microblogging.service.UserService;
+import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/users")
@@ -28,14 +30,18 @@ public class UserController {
     return ResponseEntity.ok(userService.getUsers());
   }
 
-  @GetMapping("/{name}")
-  public ResponseEntity<UserDto> getUser(@PathVariable String name) {
-    return ResponseEntity.ok(userService.getUser(name));
+  @GetMapping("/{userName}")
+  public ResponseEntity<UserDto> getUser(@PathVariable String userName) {
+    return ResponseEntity.ok(userService.getUser(userName));
   }
 
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-    return ResponseEntity.ok(userService.createUser(userDto));
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+        .path("/")
+        .buildAndExpand(userDto.getUserName())
+        .toUri();
+    return ResponseEntity.created(location).body(userService.createUser(userDto));
   }
 
 }

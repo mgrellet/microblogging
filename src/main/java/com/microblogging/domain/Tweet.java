@@ -10,23 +10,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
-@Table(name = "post")
+@Table(name = "tweet")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Post {
+public class Tweet {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private String postId;
+  private Integer tweetId;
   private String userName;
-  private String postText;
+  private String tweet;
   private Date creationDate;
 }
