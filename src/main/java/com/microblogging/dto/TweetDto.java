@@ -17,5 +17,6 @@ import lombok.Setter;
 @JsonInclude(Include.NON_NULL)
 public class TweetDto {
   private String tweet;
+  private String userName;
   private Date creationDate;
 }
