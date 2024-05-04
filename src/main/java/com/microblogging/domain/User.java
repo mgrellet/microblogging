@@ -20,6 +20,4 @@ public class User {
 
   @Id
   private String userName;
-  private Integer followers;
-  private Integer following;
 }

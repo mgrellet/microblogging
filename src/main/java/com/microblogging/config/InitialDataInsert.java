@@ -21,8 +21,6 @@ public class InitialDataInsert implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
     User user = User.builder()
         .userName("@user1")
-        .following(0)
-        .followers(0)
         .build();
 
     userRepository.save(user);

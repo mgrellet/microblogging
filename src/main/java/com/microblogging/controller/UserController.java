@@ -2,6 +2,9 @@ package com.microblogging.controller;
 
 import com.microblogging.dto.UserDto;
 import com.microblogging.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.net.URI;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +29,22 @@ public class UserController {
     this.userService = userService;
   }
 
+  @Operation(summary = "Get users", description = "Get all the microblogging users")
+  @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping
   public ResponseEntity<List<UserDto>> getUsers() {
     return ResponseEntity.ok(userService.getUsers());
   }
 
+  @Operation(summary = "Get user", description = "Get user info by user name")
+  @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping("/{userName}")
   public ResponseEntity<UserDto> getUser(@PathVariable String userName) {
     return ResponseEntity.ok(userService.getUser(userName));
   }
 
+  @Operation(summary = "Create user", description = "User creation")
+  @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -45,6 +54,8 @@ public class UserController {
     return ResponseEntity.created(location).body(userService.createUser(userDto));
   }
 
+  @Operation(summary = "Follow user", description = "Follow user by user name")
+  @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping("{userToFollow}/follow")
   public ResponseEntity<String> followUser(@RequestHeader(value = "x-app-user") String userName,
       @PathVariable String userToFollow) {

@@ -55,7 +55,7 @@ public class TweetService {
     return orderByDateDesc(tweetDtos);
   }
 
-  private List<TweetDto> orderByDateDesc(List<TweetDto> list) {
+  protected List<TweetDto> orderByDateDesc(List<TweetDto> list) {
     return list.stream()
         .sorted(Comparator.comparing(TweetDto::getCreationDate).reversed())
         .toList();

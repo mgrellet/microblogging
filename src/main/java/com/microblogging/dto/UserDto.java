@@ -14,13 +14,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonInclude(Include.NON_NULL)
 public class UserDto {
 
   private String userName;
-  private Integer followers;
-  private Integer following;
-  private Integer totalPosts;
-  private List<TweetDto> posts;
+  private List<TweetDto> tweets;
 
 }
