@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/users")
 public class UserController {
 
+  public static final String SUCCESS = "success";
   private final UserService userService;
 
   @Autowired
@@ -30,6 +31,11 @@ public class UserController {
     this.userService = userService;
   }
 
+  /**
+   * Get users
+   *
+   * @return Response entity with the list of users
+   */
   @Operation(summary = "Get users", description = "Get all the microblogging users")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping
@@ -38,7 +44,7 @@ public class UserController {
     try {
       Response response = Response.builder()
           .data(userService.getUsers())
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.ok(response);
@@ -54,6 +60,12 @@ public class UserController {
     }
   }
 
+  /**
+   * Get user info by username.
+   *
+   * @param userName the username to retrieve info
+   * @return the response entity containing user info
+   */
   @Operation(summary = "Get user", description = "Get user info by user name")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping("/{userName}")
@@ -61,7 +73,7 @@ public class UserController {
     try {
       Response response = Response.builder()
           .data(userService.getUser(userName))
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.ok(response);
@@ -77,6 +89,12 @@ public class UserController {
     }
   }
 
+  /**
+   * Create a new user.
+   *
+   * @param userDto the user data to create the user
+   * @return the response entity with the created user information
+   */
   @Operation(summary = "Create user", description = "User creation")
   @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping
@@ -88,7 +106,7 @@ public class UserController {
     try {
       Response response = Response.builder()
           .data(userService.createUser(userDto))
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.created(location).body(response);
@@ -104,6 +122,13 @@ public class UserController {
     }
   }
 
+  /**
+   * Follow user by username.
+   *
+   * @param userName     the username
+   * @param userToFollow the user to follow
+   * @return the response entity of the operation
+   */
   @Operation(summary = "Follow user", description = "Follow user by user name")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping("{userToFollow}/follow")
@@ -114,7 +139,7 @@ public class UserController {
       userService.followUser(userName, userToFollow);
       Response response = Response.builder()
           .data("Following user " + userToFollow)
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.ok(response);

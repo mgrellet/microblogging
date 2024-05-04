@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/tweet")
 public class TweetController {
 
+  public static final String SUCCESS = "success";
   private final TweetService tweetService;
 
   @Autowired
@@ -30,6 +31,14 @@ public class TweetController {
     this.tweetService = tweetService;
   }
 
+
+  /**
+   * Create Tweet by current user.
+   *
+   * @param userName the username creating the tweet
+   * @param tweetDto the tweet data object
+   * @return the response entity with the tweet creation status
+   */
   @Operation(summary = "Create Tweet", description = "Tweet creation by current user")
   @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping
@@ -43,7 +52,7 @@ public class TweetController {
     try {
       Response response = Response.builder()
           .data(tweetService.createTweet(tweetDto, userName))
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.created(location).body(response);
@@ -59,6 +68,13 @@ public class TweetController {
     }
   }
 
+  /**
+   * Gets the user timeline for a specific user and following user.
+   *
+   * @param userName          the username of the user
+   * @param followingUserName the username of the following user
+   * @return the ResponseEntity containing the user timeline
+   */
   @Operation(summary = "Gets user timeline", description = "Gets the list of tweets by user as timeline")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping("/{followingUserName}/timeline")
@@ -69,7 +85,7 @@ public class TweetController {
     try {
       Response response = Response.builder()
           .data(tweetService.getUserTimeline(userName, followingUserName))
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.ok(response);
@@ -85,6 +101,12 @@ public class TweetController {
     }
   }
 
+  /**
+   * Gets timeline
+   *
+   * @param userName the username of the user
+   * @return ResponseEntity containing the user timeline
+   */
   @Operation(summary = "Gets timeline", description = "Gets the list of tweets by all user as timeline")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping("/timeline")
@@ -94,7 +116,7 @@ public class TweetController {
     try {
       Response response = Response.builder()
           .data(tweetService.getTimeline(userName))
-          .message("success")
+          .message(SUCCESS)
           .status(HttpStatus.OK.value())
           .build();
       return ResponseEntity.ok(response);
