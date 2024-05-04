@@ -36,6 +36,15 @@ public class TweetService {
   public List<TweetDto> getUserTimeline(String userName, String followingUserName) {
     List<Following> followingList = followingRepository
         .findByUserNameAndFollowing(userName, followingUserName);
+    return getTweetsByFollowing(followingList);
+  }
+
+  public List<TweetDto> getTimeline(String userName) {
+    List<Following> followingList = followingRepository.findByUserName(userName);
+    return getTweetsByFollowing(followingList);
+  }
+
+  private List<TweetDto> getTweetsByFollowing(List<Following> followingList) {
     List<TweetDto> tweetDtos = new ArrayList<>();
     for (Following following : followingList) {
       List<Tweet> tweets = tweetRepository.findByUserName(following.getFollowing());

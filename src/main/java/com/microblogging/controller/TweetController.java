@@ -43,4 +43,10 @@ public class TweetController {
     return ResponseEntity.ok(tweetService.getUserTimeline(userName, followingUserName));
   }
 
+  @GetMapping("/timeline")
+  public ResponseEntity<List<TweetDto>> followUser(
+      @RequestHeader(value = "x-app-user") String userName) {
+    return ResponseEntity.ok(tweetService.getTimeline(userName));
+  }
+
 }
