@@ -1,13 +1,14 @@
 package com.microblogging.controller;
 
+import com.microblogging.dto.Response;
 import com.microblogging.dto.UserDto;
 import com.microblogging.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.net.URI;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,35 +33,101 @@ public class UserController {
   @Operation(summary = "Get users", description = "Get all the microblogging users")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping
-  public ResponseEntity<List<UserDto>> getUsers() {
-    return ResponseEntity.ok(userService.getUsers());
+  public ResponseEntity<Response> getUsers() {
+
+    try {
+      Response response = Response.builder()
+          .data(userService.getUsers())
+          .message("success")
+          .status(HttpStatus.OK.value())
+          .build();
+      return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+      Response errorResponse = Response.builder()
+          .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+          .data(e.getMessage())
+          .message("Error while fetching users")
+          .build();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(errorResponse);
+    }
   }
 
   @Operation(summary = "Get user", description = "Get user info by user name")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @GetMapping("/{userName}")
-  public ResponseEntity<UserDto> getUser(@PathVariable String userName) {
-    return ResponseEntity.ok(userService.getUser(userName));
+  public ResponseEntity<Response> getUser(@PathVariable String userName) {
+    try {
+      Response response = Response.builder()
+          .data(userService.getUser(userName))
+          .message("success")
+          .status(HttpStatus.OK.value())
+          .build();
+      return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+      Response errorResponse = Response.builder()
+          .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+          .data(e.getMessage())
+          .message("Error while fetching user")
+          .build();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(errorResponse);
+    }
   }
 
   @Operation(summary = "Create user", description = "User creation")
   @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+  public ResponseEntity<Response> createUser(@RequestBody UserDto userDto) {
     URI location = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/")
         .buildAndExpand(userDto.getUserName())
         .toUri();
-    return ResponseEntity.created(location).body(userService.createUser(userDto));
+    try {
+      Response response = Response.builder()
+          .data(userService.createUser(userDto))
+          .message("success")
+          .status(HttpStatus.OK.value())
+          .build();
+      return ResponseEntity.created(location).body(response);
+
+    } catch (Exception e) {
+      Response errorResponse = Response.builder()
+          .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+          .data(e.getMessage())
+          .message("Error while creating user")
+          .build();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(errorResponse);
+    }
   }
 
   @Operation(summary = "Follow user", description = "Follow user by user name")
   @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping("{userToFollow}/follow")
-  public ResponseEntity<String> followUser(@RequestHeader(value = "x-app-user") String userName,
+  public ResponseEntity<Response> followUser(@RequestHeader(value = "x-app-user") String userName,
       @PathVariable String userToFollow) {
-    userService.followUser(userName, userToFollow);
-    return ResponseEntity.ok("Following user " + userToFollow);
+
+    try {
+      userService.followUser(userName, userToFollow);
+      Response response = Response.builder()
+          .data("Following user " + userToFollow)
+          .message("success")
+          .status(HttpStatus.OK.value())
+          .build();
+      return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+      Response errorResponse = Response.builder()
+          .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+          .data(e.getMessage())
+          .message("Error while following user")
+          .build();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(errorResponse);
+    }
   }
 
 }
