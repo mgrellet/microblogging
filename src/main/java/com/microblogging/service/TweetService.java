@@ -6,6 +6,7 @@ import com.microblogging.dto.TweetDto;
 import com.microblogging.repository.FollowingRepository;
 import com.microblogging.repository.TweetRepository;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -46,14 +47,18 @@ public class TweetService {
 
   private List<TweetDto> getTweetsByFollowing(List<Following> followingList) {
     List<TweetDto> tweetDtos = new ArrayList<>();
-    for (Following following : followingList) {
+    followingList.forEach(following -> {
       List<Tweet> tweets = tweetRepository.findByUserName(following.getFollowing());
-      for (Tweet tweet : tweets) {
-        tweetDtos.add(entityToDto(tweet));
-      }
+      tweets.parallelStream().forEach(tweet -> tweetDtos.add(entityToDto(tweet)));
+    });
 
-    }
-    return tweetDtos;
+    return orderByDateDesc(tweetDtos);
+  }
+
+  private List<TweetDto> orderByDateDesc(List<TweetDto> list) {
+    return list.stream()
+        .sorted(Comparator.comparing(TweetDto::getCreationDate).reversed())
+        .toList();
   }
 
   private TweetDto entityToDto(Tweet tweet) {
