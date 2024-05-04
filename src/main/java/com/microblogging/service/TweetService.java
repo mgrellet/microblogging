@@ -65,7 +65,7 @@ public class TweetService {
   }
 
   /**
-   * Retrieves the tweets as  timeline of all the users that current user follows.
+   * Retrieves the tweets as timeline of all the users that current user follows.
    *
    * @param userName the username of the user
    * @return a list of tweet DTOs representing the user timeline

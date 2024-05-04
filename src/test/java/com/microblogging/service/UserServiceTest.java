@@ -6,15 +6,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import com.microblogging.domain.Following;
 import com.microblogging.domain.Tweet;
 import com.microblogging.domain.User;
 import com.microblogging.dto.TweetDto;
 import com.microblogging.dto.UserDto;
+import com.microblogging.repository.FollowingRepository;
 import com.microblogging.repository.TweetRepository;
 import com.microblogging.repository.UserRepository;
 import com.microblogging.service.exceptions.UserAlreadyExistException;
+import com.microblogging.service.exceptions.UserNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +46,9 @@ public class UserServiceTest {
   @Mock
   private TweetRepository tweetRepository;
 
+  @Mock
+  private FollowingRepository followingRepository;
+
   List<UserDto> mockUserDtoList;
   UserDto mockDtoUser;
 
@@ -50,8 +61,10 @@ public class UserServiceTest {
   List<Tweet> mockTweetListEntity;
   Tweet mockTweetEntity;
 
-
   String userName = "@test";
+  String userToFollow = "@userToFollow";
+
+  Following following;
 
   @BeforeEach
   public void before() {
@@ -68,10 +81,12 @@ public class UserServiceTest {
 
     mockTweetDto = TweetDto.builder().tweet("tweet message").build();
     mockTweetDtoList = List.of(mockTweetDto);
+
+    following = Following.builder().userName(userName).following(userToFollow).build();
   }
 
   @Test
-  void getUsersTest() throws Exception {
+  void getUsersTest() {
 
     when(userRepository.findAll()).thenReturn(mockUserListEntity);
     when(tweetRepository.findByUserName(anyString())).thenReturn(mockTweetListEntity);
@@ -85,7 +100,7 @@ public class UserServiceTest {
   }
 
   @Test
-  void getSingleUserTest() throws Exception {
+  void getSingleUserTest() {
 
     when(userRepository.findById(any(String.class))).thenReturn(
         Optional.ofNullable(mockUserEntity));
@@ -97,7 +112,7 @@ public class UserServiceTest {
   }
 
   @Test
-  void createNewUser_ExistingUser() throws Exception {
+  void createNewUserTest_ExistingUser() {
 
     when(userRepository.findById(any(String.class))).thenReturn(
         Optional.ofNullable(mockUserEntity));
@@ -108,9 +123,9 @@ public class UserServiceTest {
   }
 
   @Test
-  void createNonExistingUser() throws Exception {
+  void createNewUserTest_NonExistingUser() {
 
-    when(userRepository.findById(any(String.class))).thenReturn(Optional.empty());
+    when(userRepository.findById(anyString())).thenReturn(Optional.empty());
     when(userRepository.save(any(User.class))).thenReturn(mockUserEntity);
 
     var result = userService.createUser(mockDtoUser);
@@ -118,6 +133,32 @@ public class UserServiceTest {
     assertAll("Check results",
         () -> assertNotNull(result),
         () -> assertEquals(userName, result.getUserName()));
+  }
+
+  @Test
+  void followUserTest() {
+
+    when(userRepository.findById(anyString())).thenReturn(
+        Optional.ofNullable(mockUserEntity));
+    when(followingRepository.save(following)).thenReturn(following);
+
+    userService.followUser(mockDtoUser.getUserName(), userToFollow);
+
+    verify(userRepository, atLeastOnce()).findById(anyString());
+    verify(followingRepository, atLeastOnce()).save(any(Following.class));
+  }
+
+  @Test
+  void followUserTest_UserNotExist() {
+
+    when(userRepository.findById(userName)).thenReturn(Optional.empty());
+    when(userRepository.findById(userToFollow)).thenReturn(Optional.of(new User(userToFollow)));
+
+    assertThrows(UserNotFoundException.class, () -> userService.followUser(userName, userToFollow));
+
+    verify(userRepository).findById(userName);
+    verifyNoInteractions(followingRepository);
+
   }
 
 }

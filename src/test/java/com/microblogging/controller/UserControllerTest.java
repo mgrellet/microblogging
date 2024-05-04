@@ -1,6 +1,8 @@
 package com.microblogging.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.microblogging.dto.UserDto;
 import com.microblogging.service.UserService;
+import com.microblogging.service.exceptions.UserAlreadyExistException;
+import com.microblogging.service.exceptions.UserNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,6 +67,16 @@ class UserControllerTest {
   }
 
   @Test
+  void getUsersTest_Exception() throws Exception {
+
+    doThrow(new RuntimeException("Error")).when(userService).getUsers();
+    mockMvc.perform(get("/users"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.message").value("Error while fetching users"))
+        .andExpect(jsonPath("$.status").value(500));
+  }
+
+  @Test
   void getSingleUserTest() throws Exception {
 
     when(userService.getUser(mockUser.getUserName())).thenReturn(mockUser);
@@ -74,7 +88,20 @@ class UserControllerTest {
   }
 
   @Test
-  void createUser() throws Exception {
+  void getSingleUserTest_UserNotFound() throws Exception {
+
+    doThrow(new UserNotFoundException(
+        String.format("User with user name %s not found", mockUser.getUserName())))
+        .when(userService).getUser(mockUser.getUserName());
+
+    mockMvc.perform(get("/users/" + mockUser.getUserName()))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.message").value("Error while fetching user"))
+        .andExpect(jsonPath("$.status").value(500));
+  }
+
+  @Test
+  void createUserTest() throws Exception {
 
     when(userService.createUser(any(UserDto.class))).thenReturn(mockUser);
 
@@ -87,4 +114,53 @@ class UserControllerTest {
         .andExpect(jsonPath("$.status").value(201));
   }
 
+  @Test
+  void createUserTest_ExistingUser() throws Exception {
+
+    doThrow(new UserAlreadyExistException("User @test already exist"))
+        .when(userService).createUser(any(UserDto.class));
+
+    mockMvc.perform(post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"userName\": \"@test\"}"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.data").value("User @test already exist"))
+        .andExpect(jsonPath("$.message").value("Error while creating user"))
+        .andExpect(jsonPath("$.status").value(500));
+  }
+
+  @Test
+  void followUserTest() throws Exception {
+
+    String userName = "@user";
+    String userToFollow = "@test";
+
+    doNothing().when(userService).followUser(userName, userToFollow);
+
+    mockMvc.perform(post("/users/" + userToFollow + "/follow")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("x-app-user", "@user"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").value("Following user @test"))
+        .andExpect(jsonPath("$.message").value("success"))
+        .andExpect(jsonPath("$.status").value(200));
+  }
+
+  @Test
+  void followUserTest_UserNotFound() throws Exception {
+
+    String userName = "@user";
+    String userToFollow = "@test";
+
+    doThrow(
+        new UserNotFoundException(String.format("User with user name %s not found", userToFollow)))
+        .when(userService).followUser(userName, userToFollow);
+
+    mockMvc.perform(post("/users/" + userToFollow + "/follow")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("x-app-user", "@user"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.message").value("Error while following user"))
+        .andExpect(jsonPath("$.status").value(500));
+  }
 }
