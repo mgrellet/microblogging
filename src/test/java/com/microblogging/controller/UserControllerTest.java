@@ -46,7 +46,7 @@ class UserControllerTest {
   public void before() {
     MockitoAnnotations.openMocks(this);
     mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    mockUser = UserDto.builder().userName("@test").followers(0).following(0).build();
+    mockUser = UserDto.builder().userName("@test").build();
     mockUserList = List.of(mockUser);
   }
 
@@ -56,9 +56,10 @@ class UserControllerTest {
     when(userService.getUsers()).thenReturn(mockUserList);
     mockMvc.perform(get("/users"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].userName").value("@test"))
-        .andExpect(jsonPath("$[0].followers").value(0))
-        .andExpect(jsonPath("$[0].following").value(0));
+        .andExpect(jsonPath("$.data.length()").value(1))
+        .andExpect(jsonPath("$.data[0].userName").value("@test"))
+        .andExpect(jsonPath("$.message").value("success"))
+        .andExpect(jsonPath("$.status").value(200));
   }
 
   @Test
@@ -67,9 +68,9 @@ class UserControllerTest {
     when(userService.getUser(mockUser.getUserName())).thenReturn(mockUser);
     mockMvc.perform(get("/users/" + mockUser.getUserName()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.userName").value("@test"))
-        .andExpect(jsonPath("$.followers").value(0))
-        .andExpect(jsonPath("$.following").value(0));
+        .andExpect(jsonPath("$.data.userName").value("@test"))
+        .andExpect(jsonPath("$.message").value("success"))
+        .andExpect(jsonPath("$.status").value(200));
   }
 
   @Test
@@ -80,10 +81,10 @@ class UserControllerTest {
     mockMvc.perform(post("/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"userName\": \"@test\"}"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.userName").value("@test"))
-        .andExpect(jsonPath("$.followers").value(0))
-        .andExpect(jsonPath("$.following").value(0));
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.data.userName").value("@test"))
+        .andExpect(jsonPath("$.message").value("success"))
+        .andExpect(jsonPath("$.status").value(201));
   }
 
 }

@@ -107,7 +107,7 @@ public class UserController {
       Response response = Response.builder()
           .data(userService.createUser(userDto))
           .message(SUCCESS)
-          .status(HttpStatus.OK.value())
+          .status(HttpStatus.CREATED.value())
           .build();
       return ResponseEntity.created(location).body(response);
 

@@ -11,6 +11,7 @@ import com.microblogging.repository.UserRepository;
 import com.microblogging.service.exceptions.UserAlreadyExistException;
 import com.microblogging.service.exceptions.UserNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-
-  private final TweetService tweetService;
 
   private final UserRepository userRepository;
   private final FollowingRepository followingRepository;
@@ -29,7 +28,6 @@ public class UserService {
   public UserService(TweetService tweetService, UserRepository userRepository,
       FollowingRepository followingRepository,
       TweetRepository tweetRepository) {
-    this.tweetService = tweetService;
     this.userRepository = userRepository;
     this.followingRepository = followingRepository;
     this.tweetRepository = tweetRepository;
@@ -109,7 +107,7 @@ public class UserService {
             .creationDate(tweet.getCreationDate())
             .build())
     );
-    return tweetService.orderByDateDesc(tweetDtos);
+    return orderByDateDesc(tweetDtos);
   }
 
   private UserDto entityToDto(User user, List<TweetDto> tweetDtos) {
@@ -124,5 +122,11 @@ public class UserService {
     if (user.isEmpty()) {
       throw new UserNotFoundException(String.format("User with user name %s not found", userName));
     }
+  }
+
+  private List<TweetDto> orderByDateDesc(List<TweetDto> list) {
+    return list.stream()
+        .sorted(Comparator.comparing(TweetDto::getCreationDate).reversed())
+        .toList();
   }
 }
