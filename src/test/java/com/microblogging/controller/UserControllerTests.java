@@ -29,10 +29,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest
-//@ContextConfiguration(classes = UserController.class)
 @ContextConfiguration(classes = TestContext.class)
 @Import(UserController.class)
-class UserControllerTest {
+class UserControllerTests {
 
   @MockBean
   private UserService userService;
@@ -47,7 +46,7 @@ class UserControllerTest {
   UserDto mockUser;
 
   @BeforeEach
-  public void before() {
+  public void beforeEach() {
     MockitoAnnotations.openMocks(this);
     mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     mockUser = UserDto.builder().userName("@test").build();

@@ -53,7 +53,7 @@ public class TweetController {
       Response response = Response.builder()
           .data(tweetService.createTweet(tweetDto, userName))
           .message(SUCCESS)
-          .status(HttpStatus.OK.value())
+          .status(HttpStatus.CREATED.value())
           .build();
       return ResponseEntity.created(location).body(response);
 
