@@ -7,6 +7,7 @@ import com.microblogging.dto.TweetDto;
 import com.microblogging.repository.FollowingRepository;
 import com.microblogging.repository.TweetRepository;
 import com.microblogging.repository.UserRepository;
+import com.microblogging.service.exceptions.InvalidTweetException;
 import com.microblogging.service.exceptions.UserNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ public class TweetService {
    */
   public TweetDto createTweet(TweetDto tweetDto, String userName) {
     checkUserExistence(userName);
+    validateTweetText(tweetDto.getTweet());
     Tweet tweet = Tweet.builder()
         .tweet(tweetDto.getTweet())
         .userName(userName)
@@ -104,6 +106,12 @@ public class TweetService {
     Optional<User> user = userRepository.findById(userName);
     if (user.isEmpty()) {
       throw new UserNotFoundException(String.format("User with user name %s not found", userName));
+    }
+  }
+
+  private void validateTweetText(String tweet) {
+    if (tweet == null || tweet.isEmpty() || tweet.length() > 280) {
+      throw new InvalidTweetException("Tweet cannot be empty or greater than 280 characters");
     }
   }
 }

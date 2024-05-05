@@ -6,6 +6,7 @@ import com.microblogging.service.TweetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class TweetController {
   @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(mediaType = "application/json"))
   @PostMapping
   public ResponseEntity<Response> createTweet(@RequestHeader(value = "x-app-user") String userName,
-      @RequestBody TweetDto tweetDto) {
+      @RequestBody @Valid TweetDto tweetDto) {
     URI location = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/")
         .buildAndExpand(tweetDto.getTweet())
