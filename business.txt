@@ -1,5 +1,5 @@
 Assumtions
 -Tweet no puede ser vacio
--Todos los usuarios son validos, pero deben crearse con el endpoint correspondiente
+-Todos los usuarios son validos, pero deben crearse con el endpoint correspondiente (ver readme.md y swagger)
 -Un usuario (@user1) es creado al momento de levantar la app para propositos de testing
 -No hay validaciones en el nombre del usuario (pueden o no empezar con @)
