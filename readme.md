@@ -37,7 +37,7 @@ programas instalados
 
 **Service** - Layer con la lógica de negocio.
 
-**Dto** - Data transfer object to be retrieved.
+**Dto** - Data transfer object.
 
 **Exception** - Contiene Custom Exceptions para la aplicación
 
@@ -82,4 +82,4 @@ del projecto y correr:
 - Timeline de usuarios que se siguen
 
 **postman collection**
-[Download collection.json]()
+[Download collection.json](https://raw.githubusercontent.com/mgrellet/microblogging/main/assets/microblogging.postman_collection.json)
