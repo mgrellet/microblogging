@@ -1,0 +1,211 @@
+{
+	"info": {
+		"_postman_id": "84a662f7-540c-41fd-9c70-a6fa6021b2a4",
+		"name": "microblogging",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3027515"
+	},
+	"item": [
+		{
+			"name": "get users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createUser",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <TOKEN>",
+						"uuid": "48c925ee-3826-4049-b93b-b52337a40845"
+					},
+					{
+						"key": "x-request-context",
+						"value": "8cdfbf32-447c-48ae-a39d-c4dfbb4d5bd0",
+						"uuid": "8a340635-9abb-4c8d-bd7f-fa508233a220"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"@user2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/@user2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"@user2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createTweet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-app-user",
+						"value": "@user2",
+						"uuid": "4ca31e66-d32e-47f2-90c7-a4bb203aa705"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"tweet\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in volupt\"       \r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tweet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tweet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "followUser",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-app-user",
+						"value": "@user1",
+						"uuid": "a41f8a37-26d7-4e01-85a2-305b66ec5647"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/@user2/follow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"@user2",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userTimeline",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-app-user",
+						"value": "@user1",
+						"uuid": "af2b2828-16a6-4cb9-bd29-e498e9d7fa52"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/tweet/@user2/timeline",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tweet",
+						"@user2",
+						"timeline"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "timeline",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-app-user",
+						"value": "@user1",
+						"uuid": "b00c39ca-f5ed-435d-b483-fd4b229d58b1"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/tweet/timeline",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tweet",
+						"timeline"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

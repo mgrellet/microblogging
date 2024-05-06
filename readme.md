@@ -67,7 +67,7 @@ del projecto y correr:
 
 **Diagrama de la aplicación**
 ---------------------------------------
-![Scheme](img/diagram.png)
+![Scheme](assets/img/diagram.png)
 <br /><br />
 
 **Funcionalidad**
@@ -80,3 +80,6 @@ del projecto y correr:
 - Seguir usuario
 - Timeline de un usuario
 - Timeline de usuarios que se siguen
+
+**postman collection**
+[Download collection.json]()
